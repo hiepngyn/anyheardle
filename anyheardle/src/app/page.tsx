@@ -1,19 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styles from "./page.module.css";
-
-const PLACEHOLDER_ARTISTS = [
-  "The Beatles",
-  "The Weeknd",
-  "The Rolling Stones",
-  "The Chainsmokers",
-  "The Strokes",
-  "The Who",
-  "The Doors",
-  "The Script",
-  "The Killers",
-  "The 1975"
-];
 
 export default function Home() {
   const [artist, setArtist] = useState("");
@@ -21,10 +8,32 @@ export default function Home() {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [artistQuery, setArtistQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [artistResults, setArtistResults] = useState<{id: string, name: string}[]>([]);
+  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const filteredArtists = artistQuery
-    ? PLACEHOLDER_ARTISTS.filter(a => a.toLowerCase().includes(artistQuery.toLowerCase())).slice(0, 5)
-    : [];
+  const handleArtistInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setArtistQuery(value);
+    setShowDropdown(true);
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    if (value.trim() === "") {
+      setArtistResults([]);
+      return;
+    }
+    searchTimeout.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/artist?name=${encodeURIComponent(value)}&quantity=5`);
+        if (res.ok) {
+          const data = await res.json();
+          setArtistResults(data.artists || []);
+        } else {
+          setArtistResults([]);
+        }
+      } catch {
+        setArtistResults([]);
+      }
+    }, 250); // debounce
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,33 +55,31 @@ export default function Home() {
               type="text"
               placeholder="Search artist..."
               value={artistQuery}
-              onChange={e => {
-                setArtistQuery(e.target.value);
-                setShowDropdown(true);
-              }}
+              onChange={handleArtistInput}
               onFocus={() => setShowDropdown(true)}
               onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
               autoComplete="off"
             />
-            {showDropdown && filteredArtists.length > 0 && (
+            {showDropdown && artistResults.length > 0 && (
               <ul className={styles.artistDropdown}>
-                {filteredArtists.map((a, i) => (
+                {artistResults.map((a, i) => (
                   <li
-                    key={i}
+                    key={a.id}
                     className={styles.artistDropdownItem}
                     onMouseDown={() => {
-                      setArtist(a);
-                      setArtistQuery(a);
+                      setArtist(a.name);
+                      setArtistQuery(a.name);
                       setShowDropdown(false);
                     }}
                   >
-                    {a}
+                    {a.name}
                   </li>
                 ))}
               </ul>
             )}
           </div>
           <span className={styles.iconStats}>📶</span>
+          <span className={styles.iconHelp}>?</span>
         </div>
       </header>
       <main className={styles.mainHeardle}>
