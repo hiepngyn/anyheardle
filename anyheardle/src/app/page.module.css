@@ -175,13 +175,51 @@ a.secondary {
   font-family: 'Inter', Arial, sans-serif;
 }
 
-.header {
+.headerOriginal {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 24px 0 8px 0;
   position: relative;
+  padding: 24px 0 8px 0;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+.titleCentered {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+}
+.headerRightGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  padding-right: 24px;
+}
+.iconInfo {
+  margin-left: 24px;
+}
+@media (max-width: 600px) {
+  .headerOriginal {
+    padding: 16px 8px 8px 8px;
+  }
+  .headerRightGroup {
+    padding-right: 8px;
+  }
+  .iconInfo {
+    margin-left: 8px;
+  }
+}
+
+/* Remove old .header if needed */
+.header {
+  display: none;
 }
 
 .title {
@@ -208,6 +246,55 @@ a.secondary {
 .iconHelp {
   position: absolute;
   right: 16px;
+}
+
+.artistSearchWrapper {
+  position: relative;
+  margin-left: 24px;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+}
+.artistSearchInput {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #222;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.artistSearchInput:focus {
+  border-color: #1db954;
+}
+.artistDropdown {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  width: 100%;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  z-index: 10;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.artistDropdownItem {
+  padding: 10px 14px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 1rem;
+  transition: background 0.15s;
+}
+.artistDropdownItem:hover {
+  background: #333;
+  color: #1db954;
 }
 
 .mainHeardle {

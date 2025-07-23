@@ -2,10 +2,29 @@
 import { useState } from "react";
 import styles from "./page.module.css";
 
+const PLACEHOLDER_ARTISTS = [
+  "The Beatles",
+  "The Weeknd",
+  "The Rolling Stones",
+  "The Chainsmokers",
+  "The Strokes",
+  "The Who",
+  "The Doors",
+  "The Script",
+  "The Killers",
+  "The 1975"
+];
+
 export default function Home() {
   const [artist, setArtist] = useState("");
   const [guess, setGuess] = useState("");
   const [guesses, setGuesses] = useState<string[]>([]);
+  const [artistQuery, setArtistQuery] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const filteredArtists = artistQuery
+    ? PLACEHOLDER_ARTISTS.filter(a => a.toLowerCase().includes(artistQuery.toLowerCase())).slice(0, 5)
+    : [];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,11 +36,44 @@ export default function Home() {
 
   return (
     <div className={styles.heardleBg}>
-      <header className={styles.header}>
+      <header className={styles.headerOriginal}>
         <span className={styles.iconInfo}>ⓘ</span>
-        <h1 className={styles.title}>Heardle Unlimited</h1>
-        <span className={styles.iconStats}>📶</span>
-        <span className={styles.iconHelp}>?</span>
+        <h1 className={styles.titleCentered}>Heardle Unlimited</h1>
+        <div className={styles.headerRightGroup}>
+          <div className={styles.artistSearchWrapper}>
+            <input
+              className={styles.artistSearchInput}
+              type="text"
+              placeholder="Search artist..."
+              value={artistQuery}
+              onChange={e => {
+                setArtistQuery(e.target.value);
+                setShowDropdown(true);
+              }}
+              onFocus={() => setShowDropdown(true)}
+              onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+              autoComplete="off"
+            />
+            {showDropdown && filteredArtists.length > 0 && (
+              <ul className={styles.artistDropdown}>
+                {filteredArtists.map((a, i) => (
+                  <li
+                    key={i}
+                    className={styles.artistDropdownItem}
+                    onMouseDown={() => {
+                      setArtist(a);
+                      setArtistQuery(a);
+                      setShowDropdown(false);
+                    }}
+                  >
+                    {a}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <span className={styles.iconStats}>📶</span>
+        </div>
       </header>
       <main className={styles.mainHeardle}>
         <section className={styles.guessSection}>
