@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 let cachedToken: string | null = null;
 let tokenExpiresAt = 0;
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const now = Date.now();
 
   if (cachedToken && now < tokenExpiresAt) {
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
 
   if (data.access_token) {
     cachedToken = data.access_token;
-    tokenExpiresAt = now + data.expires_in * 1000; // expires_in is in seconds
+    tokenExpiresAt = now + data.expires_in * 1000;
 
     return NextResponse.json({ access_token: cachedToken });
   } else {

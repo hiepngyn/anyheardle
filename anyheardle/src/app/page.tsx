@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import styles from "./page.module.css";
 
 interface Song {
@@ -35,7 +35,6 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedArtistId, setSelectedArtistId] = useState("");
   const [showSongDropdown, setShowSongDropdown] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const youtubeIframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -75,7 +74,6 @@ export default function Home() {
     setCurrentSong(null);
     setYoutubePreview(null);
     setIsPlaying(false);
-    setGameStarted(false);
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
@@ -169,7 +167,6 @@ export default function Home() {
           setIsPlaying(true);
         }
       }
-      setGameStarted(true);
     }
   };
 
@@ -220,7 +217,6 @@ export default function Home() {
     setCurrentSong(null);
     setYoutubePreview(null);
     setIsPlaying(false);
-    setGameStarted(false);
     setGuess("");
     setShowSongDropdown(false);
     

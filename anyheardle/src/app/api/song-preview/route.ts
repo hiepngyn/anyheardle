@@ -32,11 +32,11 @@ export async function GET(req: NextRequest) {
             } else {
                 return NextResponse.json({ error: 'No preview found' }, { status: 404 });
             }
-        } catch (fetchError) {
+        } catch {
             return NextResponse.json({ error: 'Failed to search YouTube' }, { status: 500 });
         }
 
-    } catch (error) {
+    } catch {
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 } 

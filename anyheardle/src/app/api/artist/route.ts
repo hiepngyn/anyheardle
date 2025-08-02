@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+interface SpotifyArtist {
+  id: string;
+  name: string;
+}
+
 export async function GET(req: NextRequest){
     const artistName = req.nextUrl.searchParams.get('name');
     const artistLimit = req.nextUrl.searchParams.get('quantity');
@@ -7,7 +12,7 @@ export async function GET(req: NextRequest){
     if(!artistLimit) return NextResponse.json({error: "Missing artist limit"})
 
 
-    const tokenRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/spotify-token`);
+    const tokenRes = await fetch(`${req.nextUrl.origin}/api/spotify-token`);
     const { access_token } = await tokenRes.json()
 
     const searchRes = await fetch(
@@ -24,7 +29,7 @@ export async function GET(req: NextRequest){
     return NextResponse.json({ error: 'Artist not found' }, { status: 404 });
     }
 
-    const artists = data.artists.items.map((artist: any) => ({
+    const artists = data.artists.items.map((artist: SpotifyArtist) => ({
       id: artist.id,
       name: artist.name
     }));
